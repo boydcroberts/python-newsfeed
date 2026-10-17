@@ -53,9 +53,22 @@ python seeds.py
 
 ### Run
 
+Set a private session-signing key before deploying, using the same key for every
+worker and restart. Generate one with `python -c "import secrets; print(secrets.token_hex(32))"`
+and store it in your hosting provider's `SECRET_KEY` environment variable. Do not
+commit it. Configured keys shorter than 32 bytes are rejected.
+
+Without `SECRET_KEY`, local development uses a random key. Existing sessions
+expire when the process restarts; multiple production workers require a shared
+configured key. Sessions previously signed with the public `dev` key become
+invalid after this fix, and users must sign in again.
+
 ```bash
 python -m flask run
 ```
+
+Run the session-security regression tests with
+`python -m unittest discover -s tests -v` (no database required).
 
 ## Project Structure
 

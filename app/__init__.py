@@ -1,5 +1,5 @@
-from os import getenv
 from flask import Flask
+from app.session_security import session_secret
 from app.routes import home, dashboard, api
 from app.db import init_db
 from app.utils import filters
@@ -10,7 +10,9 @@ def create_app(test_config=None):
     app = Flask(__name__, static_url_path='/')
     app.url_map.strict_slashes = False
     app.config.from_mapping(
-        SECRET_KEY=getenv('SECRET_KEY', 'dev')
+        SECRET_KEY=session_secret(),
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
     )
     init_db(app)
 
